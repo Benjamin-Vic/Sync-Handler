@@ -1,0 +1,9 @@
+PORT=8000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=password
+DB_DATABASE=postgres
+DB_SYNC=true
+JWT_SECRET=secret
+JWT_EXPIRATION=12h
