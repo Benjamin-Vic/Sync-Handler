@@ -1,5 +1,7 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Post, Put, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Request } from "express";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
+import { FindManyOptions } from "typeorm";
 import { CreateRankDto } from "./dto/create.rank.dto";
 import { UpdateRankDto } from "./dto/update.rank.dto";
 import { Rank } from "./rank.entity";
@@ -12,13 +14,35 @@ export class RankController {
         private readonly rankService: RankService
     ) { }
 
+    @Get("columns")
+    async getColumns(): Promise<string[]> {
+        const removed = ["permissions", "permissionGroups", "players"];
+        return (await this.rankService.getColumns()).filter((column: string) => !removed.includes(column));
+    }
+
     @Get()
-    async findAll(): Promise<Rank[]> {
-        return this.rankService.find();
+    async findAll(@Query() query: any): Promise<Rank[]> {
+        const options: FindManyOptions<Rank> = {};
+
+        if (query.sort && query.order) {
+            if (!(await this.rankService.getColumns()).includes(query.sort)) {
+                throw new BadRequestException("Invalid sort column");
+            }
+
+            if (!["ASC", "DESC"].includes(query.order)) {
+                throw new BadRequestException("Invalid sort order");
+            }
+
+            options.order = {
+                [query.sort]: query.order
+            };
+        }
+
+        return this.rankService.find(options);
     }
 
     @Get(":id")
-    async findById(id: number): Promise<Rank | null> {
+    async findById(@Param("id", ParseIntPipe) id: number): Promise<Rank | null> {
         const rank: Rank | null = await this.rankService.findOne({ where: [{ id }] });
 
         if (!rank) {
@@ -38,7 +62,7 @@ export class RankController {
     }
 
     @Put(":id")
-    async update(id: number, @Body() dto: UpdateRankDto): Promise<void> {
+    async update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateRankDto): Promise<void> {
         const rank: Rank | null = await this.rankService.findOne({ where: [{ id }] });
 
         if (!rank) {
@@ -57,7 +81,7 @@ export class RankController {
     }
 
     @Delete(":id")
-    async delete(id: number): Promise<void> {
+    async delete(@Param("id", ParseIntPipe) id: number): Promise<void> {
         const rank: Rank | null = await this.rankService.findOne({ where: [{ id }] });
 
         if (!rank) {

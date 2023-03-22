@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Request } from "express";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { CreateUserDto } from "./dto/create.user.dto";
 import { UpdateUserDto } from "./dto/update.user.dto";
@@ -10,14 +11,19 @@ import { UserService } from "./user.service";
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
+    @Get("columns")
+    async getColumns(): Promise<string[]> {
+        return this.userService.getColumns();
+    }
+
     @Get()
     async findAll(): Promise<[User[], number]> {
         return this.userService.find();
     }
 
     @Get(":id")
-    async findById(@Param("id", ParseIntPipe) id: number): Promise<User | null> {
-        const user: User | null = await this.userService.findOne({ where: [{ id }]});
+    async findById(@Req() req: Request, @Param("id", ParseIntPipe) id: number): Promise<User | null> {
+        const user: User | null = id === -1 ? <User>req.user : await this.userService.findOne({ where: [{ id }] });
 
         if (!user) {
             throw new NotFoundException("User not found");
@@ -38,7 +44,7 @@ export class UserController {
 
     @Put(":id")
     async update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateUserDto): Promise<void> {
-        const user: User | null = await this.userService.findOne({ where: [{ id }]});
+        const user: User | null = await this.userService.findOne({ where: [{ id }] });
 
         if (!user) {
             throw new NotFoundException("User not found");
@@ -57,7 +63,7 @@ export class UserController {
 
     @Delete(":id")
     async delete(@Param("id", ParseIntPipe) id: number): Promise<void> {
-        const user: User | null = await this.userService.findOne({ where: [{ id }]});
+        const user: User | null = await this.userService.findOne({ where: [{ id }] });
 
         if (!user) {
             throw new NotFoundException("User not found");

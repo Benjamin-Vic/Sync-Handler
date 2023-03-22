@@ -10,6 +10,10 @@ export class RankService {
         @InjectRepository(Rank) private readonly rankRepository: Repository<Rank>,
     ) { }
 
+    async getColumns(): Promise<string[]> {
+        return Object.keys(this.rankRepository.metadata.propertiesMap);
+    }
+
     async find(options?: FindManyOptions<Rank> | undefined): Promise<Rank[]> {
         return this.rankRepository.find(options);
     }
@@ -64,6 +68,6 @@ export class RankService {
     }
 
     async delete(rank: Rank): Promise<void> {
-        await this.rankRepository.remove(rank);
+        await this.rankRepository.delete({id: rank.id});
     }
 }

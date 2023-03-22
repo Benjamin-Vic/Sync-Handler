@@ -16,6 +16,11 @@ export class PermissionController {
         private readonly permissionGroupService: PermissionGroupService,
     ) { }
 
+    @Get("columns")
+    async getColumns(): Promise<string[]> {
+        return this.permissionService.getColumns();
+    }
+
     @Get()
     async findAll(): Promise<Permission[]> {
         return this.permissionService.find();

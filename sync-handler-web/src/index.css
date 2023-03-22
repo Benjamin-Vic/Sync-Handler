@@ -1,8 +1,10 @@
 #root {
   --color-primary: #715DF2;
+  --color-secondary: #F2F1F8;
 
+  --color-light: #e5e5e5;
   --color-dark: #121417;
-
+  --color-dark-light: #121417;
 }
 
 body {

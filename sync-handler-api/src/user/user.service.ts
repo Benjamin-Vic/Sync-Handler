@@ -12,6 +12,10 @@ export class UserService {
         @InjectRepository(User) private readonly userRepository: Repository<User>,
     ) { }
 
+    async getColumns(): Promise<string[]> {
+        return Object.keys(this.userRepository.metadata.propertiesMap);
+    }
+
     async find(): Promise<[User[], number]> {
         return this.userRepository.findAndCount();
     }

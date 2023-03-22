@@ -15,6 +15,11 @@ export class PlayerController {
         private readonly rankService: RankService,
     ) { }
 
+    @Get("columns")
+    async getColumns(): Promise<string[]> {
+        return this.playerService.getColumns();
+    }
+
     @Get()
     async findAll(): Promise<Player[]> {
         return this.playerService.find();

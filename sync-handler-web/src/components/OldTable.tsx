@@ -1,6 +1,6 @@
-import "./Table.css"
+import "../styles/OldTable.css"
 
-const Table = (props: any): JSX.Element => {
+const TableOld = (props: any): JSX.Element => {
     const parseHeaders = (): JSX.Element[] => {
         let html: JSX.Element[] = [];
 
@@ -47,4 +47,4 @@ const Table = (props: any): JSX.Element => {
     return generateTable();
 }
 
-export default Table;
+export default TableOld;

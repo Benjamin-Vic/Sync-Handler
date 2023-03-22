@@ -1,9 +1,9 @@
-import './Dashboard.css'
+import '../styles/Dashboard.css'
 
 const Dashboard = () => {
 
     return (
-        <div className="Dashboard">
+        <div className="dashboard">
             Dashboard
         </div>
     )

@@ -1,11 +1,8 @@
 .table {
     width: 100%;
 
-    /* TMP */
-    border: red 1px solid;
-    /* TMP */
-
-
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    border-radius: 4px;
 }
 
 .table .table-head {
@@ -22,12 +19,38 @@
     color: #757575;
 }
 
+.table .table-head .table-head-elem button {
+    display: flex;
+}
+
+.table .table-head .table-head-icon {
+    width: 24px;
+    height: 24px;
+
+    margin: 0 4px;
+
+    vertical-align: text-bottom;
+}
+
 .table .table-body .table-body-elem {
     padding: 16px;
 
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 400;
+}
+
+.table .table-body .table-body-action {
+    padding: 8px;
+}
+
+.table .table-body .table-body-icon {
+    width: 24px;
+    height: 24px;
+
+    margin: 0 4px;
+
+    vertical-align: text-bottom;
 }
 
 .table .table-body .table-body-container:hover {

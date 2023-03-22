@@ -1,5 +1,7 @@
+import '../styles/Auth.css';
+import api from "../components/Api";
+
 import { useState } from 'react';
-import './Auth.css';
 
 const Auth = () => {
     const [email, setEmail] = useState("");
@@ -7,11 +9,15 @@ const Auth = () => {
 
     const login = async (e: any) => {
         e.preventDefault();
-        console.log('send login request');
+        if ((await api.login(email, password)).state) {
+            window.location.reload();
+        } else {
+            console.error('Error: send login request');
+        }
     };
 
     return (
-        <div className='Auth'>
+        <div className='auth'>
             <div className='card'>
                 <span className='title'>Sync-Handler</span>
                 <form onSubmit={login}>

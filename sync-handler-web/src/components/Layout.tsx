@@ -1,23 +1,52 @@
-import './Layout.css'
+import '../styles/Layout.css'
 
 import { Outlet } from 'react-router-dom';
-import { useState } from 'react';
-// import { Transition } from 'react-transition-group';
+import { useEffect, useRef, useState } from 'react';
+import { Transition } from 'react-transition-group';
+import api from './Api';
 
 const Layout = () => {
     const [sidenav, setSidenav] = useState(false);
-    // const nodeRef = useRef(null);
+    const nodeRef = useRef(null);
+
+    useEffect(() => {
+        getProfile();
+    }, []);
 
     const nav: any = [
         { name: "Rank", href: "/rank" },
         { name: "Player", href: "/player" },
         { name: "Permission", href: "/permission" },
         { name: "User", href: "/user" },
-    ]
+    ];
+
+    const duration = 300;
+
+    const defaultStyle = {
+        transition: `opacity ${duration}ms ease-in-out`,
+        opacity: 0,
+    }
+
+    const transitionStyles: any = {
+        entering: { opacity: 1 },
+        entered: { opacity: 1 },
+        exiting: { opacity: 0 },
+        exited: {
+            opacity: 0,
+            visibility: "hidden"
+        }
+    };
 
     const toggleSidenav = () => {
         setSidenav(!sidenav)
-    }
+    };
+
+    const getProfile = async () => {
+        if (!(await api.find('user', '-1')).state) {
+            document.cookie = "access_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+            window.location.href = "/";
+        }
+    };
 
     const compileNav = () => {
         return nav.map((item: any, index: number) => (
@@ -25,19 +54,28 @@ const Layout = () => {
                 {item.name}
             </a>
         ));
-    }
+    };
 
-    const compileSidenav = () => {
+    const compileSidenav = (): JSX.Element => {
         return (
-            <div className="sidenav">
-                {compileNav()}
-            </div>
+            <Transition nodeRef={nodeRef} in={sidenav} timeout={duration}>
+                {state => (
+                    <div ref={nodeRef} style={{
+                        ...defaultStyle,
+                        ...transitionStyles[state]
+                    }}>
+                        <div className="sidenav">
+                            {compileNav()}
+                        </div>
+                    </div>
+                )}
+            </Transition>
         );
     }
 
     return (
         <>
-            <div className="Layout">
+            <div className="layout">
                 <div className="container app">
                     <a href="/">Sync-Handler</a>
                 </div>
@@ -48,18 +86,10 @@ const Layout = () => {
                     <button onClick={toggleSidenav}>
                         <img src="/icon/menu.svg" alt="menu" />
                     </button>
+                    {compileSidenav()}
                 </div>
-                {/* <Transition nodeRef={nodeRef} in={sidenav} timeout={300}>
-                    {(state) => (
-                        <div className={`sidenav ${state}`} ref={nodeRef}>
-                            {compileNav()}
-                        </div>
-                    )}
-                </Transition> */}
-
-                {/* {sidenav ? compileSidenav() : null} */}
             </div>
-            <div className='Content'>
+            <div className='content'>
                 <Outlet />
             </div>
         </>

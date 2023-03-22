@@ -14,6 +14,10 @@ export class PlayerService {
         private readonly rankService: RankService
     ) { }
 
+    async getColumns(): Promise<string[]> {
+        return Object.keys(this.userRepository.metadata.propertiesMap);
+    }
+
     async find(options?: FindManyOptions<Player> | undefined): Promise<Player[]> {
         return this.userRepository.find(options);
     }

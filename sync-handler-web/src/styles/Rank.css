@@ -1,0 +1,42 @@
+.rank {
+    min-height: calc(100vh - 80px - 32px);
+
+    display: flex;
+    gap: 16px;
+    
+    padding: 16px;
+    
+    background-color: var(--color-secondary);
+}
+
+.rank .container-left {
+    width: 25%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.rank .container-left .title {
+    margin: 16px;
+
+    font-family: 'Roboto', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    
+    color: var(--color-primary);
+}
+
+.rank .container-left .space {
+    width: -webkit-fill-available;
+
+    padding: 16px;
+
+    background-color: var(--color-primary);
+}
+
+.rank .container-right {
+    width: 75%;
+
+}

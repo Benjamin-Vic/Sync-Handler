@@ -1,4 +1,4 @@
-.Layout {
+.layout {
     width: 100%;
     height: 80px;
 
@@ -10,29 +10,31 @@
     justify-content: space-between;
     align-items: center;
 
-    /* temp */
-    background-color: red;
-    /* temp */
+    background-color: var(--color-dark);
 }
 
-.Layout .container {
+.layout .container {
     margin: 0 8px;
 
     display: flex;
 }
 
-.Layout .container a {
+.layout .container a {
     margin: 0 8px;
     padding: 8px;
 
     font-size: 1.2rem;
     line-height: 2em;
     white-space: nowrap;
+
+    color: var(--color-light);
 }
 
-.Layout .container.desktop a:after {
+.layout .container.desktop a:after {
     display: block;
     content: "";
+
+    color: var(--color-primary);
 
     border-bottom: solid 3px;
 
@@ -40,41 +42,43 @@
     transition: transform 250ms ease-in-out;
 }
 
-.Layout .container.desktop a:hover:after {
+.layout .container.desktop a:hover:after {
     transform: scaleX(1);
 }
 
-.Layout .container.mobile {
+.layout .container.mobile {
     display: none;
 }
 
-.Layout .container.mobile button {
+.layout .container.mobile button {
     width: 32px;
 }
 
-.Layout .container.mobile button img {
+.layout .container.mobile button img {
     width: 100%;
     vertical-align: middle;
 }
 
-.Layout .sidenav {
+.layout .sidenav {
     width: 100%;
 
     position: fixed;
     top: 80px;
     left: 0;
-    
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    transition: 1s;
-
     background-color: blue;
 }
 
-.Layout .sidenav a {
+.layout .sidenav a {
+    width: 100%;
+
+    text-align: center;
+
     padding: 8px 16px;
 
     font-size: 1.2rem;
@@ -82,18 +86,18 @@
     white-space: nowrap;
 }
 
-.Content {
+.content {
     min-height: calc(100vh - 80px);
 
     border-top: 80px solid transparent;
 }
 
 @media screen and (max-width: 576px) {
-  .Layout .container.desktop {
-    display: none;
-  }
+    .layout .container.desktop {
+        display: none;
+    }
 
-  .Layout .container.mobile {
-    display: block;
-  }
+    .layout .container.mobile {
+        display: block;
+    }
 }

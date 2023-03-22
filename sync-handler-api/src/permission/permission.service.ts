@@ -12,6 +12,10 @@ export class PermissionService {
         @InjectRepository(Permission) private readonly permissionRepository: Repository<Permission>,
     ) { }
 
+    async getColumns(): Promise<string[]> {
+        return Object.keys(this.permissionRepository.metadata.propertiesMap);
+    }
+
     async find(options?: FindManyOptions<Permission> | undefined): Promise<Permission[]> {
         return this.permissionRepository.find(options);
     }
