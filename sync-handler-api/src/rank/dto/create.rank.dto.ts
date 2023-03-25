@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from "class-validator";
+import { IsArray, IsEnum, IsOptional, IsString } from "class-validator";
 import { Color } from "src/enum/color.enum";
 
 export class CreateRankDto {
@@ -22,6 +22,11 @@ export class CreateRankDto {
     @IsEnum(Color, {
         message: "Chat color must be a valid color"
     })
-    @IsOptional()
     chatColor: Color;
+
+    @IsArray({
+        message: "Permissions must be a valid array"
+    })
+    @IsOptional()
+    permissions: string[];
 }

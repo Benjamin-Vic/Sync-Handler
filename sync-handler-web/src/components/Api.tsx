@@ -35,15 +35,25 @@ class Api {
         return res
     }
 
-    findAll = async (type: string, sort: string, order: string): Promise<ResultInterface> => {
+    findAll = async (type: string, search: string = "", value: string = "", sort: string = "", order: string = "", page: number = 0, size: number = 0): Promise<ResultInterface> => {
         const params: any = {}
 
-        if (sort && sort.length > 0) {
-            params['sort'] = sort;
+        if (search && search.length > 0 && value && value.length > 0) {
+            params['search'] = search;
+            params['value'] = value;
         }
 
-        if (order && order.length > 0) {
+        if (sort && sort.length > 0 && order && order.length > 0) {
+            params['sort'] = sort;
             params['order'] = order;
+        }
+
+        if (page && page > 0) {
+            params['page'] = page;
+        }
+
+        if (size && size > 10) {
+            params['size'] = size;
         }
 
         const res: ResultInterface = await this.api.get(`/${type}`, {
@@ -63,9 +73,27 @@ class Api {
             .catch((err) => ({ state: false, data: err }))
         return res
     }
-    
+
     delete = async (type: string, id: string): Promise<ResultInterface> => {
         const res: ResultInterface = await this.api.delete(`/${type}/${id}`, {
+            withCredentials: true
+        })
+            .then(() => ({ state: true }))
+            .catch((err) => ({ state: false, data: err }))
+        return res
+    }
+
+    create = async (type: string, data: any): Promise<ResultInterface> => {
+        const res: ResultInterface = await this.api.post(`/${type}`, data, {
+            withCredentials: true
+        })
+            .then(() => ({ state: true }))
+            .catch((err) => ({ state: false, data: err }))
+        return res
+    }
+
+    update = async (type: string, id: string, data: any): Promise<ResultInterface> => {
+        const res: ResultInterface = await this.api.put(`/${type}/${id}`, data, {
             withCredentials: true
         })
             .then(() => ({ state: true }))

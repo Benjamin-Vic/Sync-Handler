@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
+import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create.user.dto";
 import { User } from "./user.entity";
 import * as bcrypt from 'bcrypt';
@@ -16,12 +16,16 @@ export class UserService {
         return Object.keys(this.userRepository.metadata.propertiesMap);
     }
 
-    async find(): Promise<[User[], number]> {
-        return this.userRepository.findAndCount();
+    async find(options?: FindManyOptions<User> | undefined): Promise<User[]> {
+        return this.userRepository.find(options);
     }
 
     async findOne(options: FindOneOptions<User>): Promise<User | null> {
         return this.userRepository.findOne(options);
+    }
+
+    async count(options?: FindManyOptions<User> | undefined): Promise<number> {
+        return this.userRepository.count(options);
     }
 
     async create(dto: CreateUserDto): Promise<void> {
@@ -31,7 +35,7 @@ export class UserService {
         user.email = dto.email;
         user.password = await bcrypt.hash(dto.password, 10);;
 
-        this.userRepository.create(user);
+        await this.userRepository.save(user);
     }
 
     async update(user: User, dto: UpdateUserDto): Promise<void> {
@@ -52,6 +56,6 @@ export class UserService {
     }
 
     async delete(user: User): Promise<void> {
-        await this.userRepository.remove(user);
+        await this.userRepository.delete({ id: user.id });
     }
 }

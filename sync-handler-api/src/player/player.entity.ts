@@ -16,5 +16,5 @@ export class Player {
     uuid: string;
 
     @ManyToOne(type => Rank, rank => rank.players)
-    rank: Rank;
+    rank: Rank | null;
 }

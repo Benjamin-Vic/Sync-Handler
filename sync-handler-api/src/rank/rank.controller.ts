@@ -1,7 +1,9 @@
 import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { Request } from "express";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
-import { FindManyOptions } from "typeorm";
+import { Color } from "src/enum/color.enum";
+import { QueryService } from "src/query/query.service";
+import { FindManyOptions, Like } from "typeorm";
 import { CreateRankDto } from "./dto/create.rank.dto";
 import { UpdateRankDto } from "./dto/update.rank.dto";
 import { Rank } from "./rank.entity";
@@ -11,34 +13,20 @@ import { RankService } from "./rank.service";
 @Controller("rank")
 export class RankController {
     constructor(
-        private readonly rankService: RankService
+        private readonly rankService: RankService,
+        private readonly queryService: QueryService
     ) { }
 
     @Get("columns")
     async getColumns(): Promise<string[]> {
-        const removed = ["permissions", "permissionGroups", "players"];
+        const removed = ["players"];
         return (await this.rankService.getColumns()).filter((column: string) => !removed.includes(column));
     }
 
     @Get()
-    async findAll(@Query() query: any): Promise<Rank[]> {
-        const options: FindManyOptions<Rank> = {};
-
-        if (query.sort && query.order) {
-            if (!(await this.rankService.getColumns()).includes(query.sort)) {
-                throw new BadRequestException("Invalid sort column");
-            }
-
-            if (!["ASC", "DESC"].includes(query.order)) {
-                throw new BadRequestException("Invalid sort order");
-            }
-
-            options.order = {
-                [query.sort]: query.order
-            };
-        }
-
-        return this.rankService.find(options);
+    async findAll(@Query() query: any): Promise<[Rank[], number]> {
+        const options: FindManyOptions<any> = this.queryService.parseFindAll(query, await this.getColumns());
+        return [await this.rankService.find(options), await this.rankService.count(options.where ? { where: options.where } : {})];
     }
 
     @Get(":id")
@@ -73,7 +61,7 @@ export class RankController {
             throw new BadRequestException("Empty request body");
         }
 
-        if (await this.rankService.findOne({ where: [{ name: dto.name }] })) {
+        if (!!dto.name && await this.rankService.findOne({ where: [{ name: dto.name }] })) {
             throw new BadRequestException("Rank name already exists");
         }
 

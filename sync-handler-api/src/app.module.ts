@@ -2,10 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { Permission } from './permission/permission.entity';
-import { PermissionModule } from './permission/permission.module';
-import { PermissionGroup } from './permission_group/permission_group.entity';
-import { PermissionGroupModule } from './permission_group/permission_group.module';
 import { Player } from './player/player.entity';
 import { PlayerModule } from './player/player.module';
 import { Rank } from './rank/rank.entity';
@@ -26,7 +22,7 @@ import { UserModule } from './user/user.module';
         username: configService.get("DB_USERNAME"),
         password: configService.get("DB_PASSWORD"),
         database: configService.get("DB_DATABASE"),
-        entities: [User, Player, Rank, Permission, PermissionGroup],
+        entities: [User, Player, Rank],
         synchronize: configService.get("DB_SYNC") === "true"
       }), inject: [ConfigService]
     }),
@@ -34,8 +30,6 @@ import { UserModule } from './user/user.module';
     UserModule,
     PlayerModule,
     RankModule,
-    PermissionModule,
-    PermissionGroupModule
   ],
   controllers: [],
   providers: [],

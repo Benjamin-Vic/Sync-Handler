@@ -1,6 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { Request } from "express";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
+import { QueryService } from "src/query/query.service";
+import { FindManyOptions } from "typeorm";
 import { CreateUserDto } from "./dto/create.user.dto";
 import { UpdateUserDto } from "./dto/update.user.dto";
 import { User } from "./user.entity";
@@ -9,16 +11,25 @@ import { UserService } from "./user.service";
 @UseGuards(JwtAuthGuard)
 @Controller("user")
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    constructor(
+        private readonly userService: UserService,
+        private readonly queryService: QueryService
+    ) { }
 
     @Get("columns")
     async getColumns(): Promise<string[]> {
-        return this.userService.getColumns();
+        const removed = ["password"];
+        return (await this.userService.getColumns()).filter((column: string) => !removed.includes(column));
     }
 
     @Get()
-    async findAll(): Promise<[User[], number]> {
-        return this.userService.find();
+    async findAll(@Query() query: any): Promise<[User[], number]> {
+        const options: FindManyOptions<any> = this.queryService.parseFindAll(query, await this.getColumns());
+        const users: User[] = await this.userService.find(options);
+        return [users.map((user: User) => {
+            delete user.password;
+            return user;
+        }), await this.userService.count(options.where ? { where: options.where } : {})];
     }
 
     @Get(":id")
@@ -36,7 +47,7 @@ export class UserController {
     @Post()
     async create(@Body() dto: CreateUserDto): Promise<void> {
         if (await this.userService.findOne({ where: [{ email: dto.email }] })) {
-            throw new NotFoundException("User email already exists");
+            throw new BadRequestException("User email already exists");
         }
 
         await this.userService.create(dto);
@@ -54,7 +65,7 @@ export class UserController {
             throw new BadRequestException("Empty request body");
         }
 
-        if (await this.userService.findOne({ where: [{ email: dto.email }] })) {
+        if (dto.email && await this.userService.findOne({ where: [{ email: dto.email }] })) {
             throw new BadRequestException("User email already exists");
         }
 
@@ -67,6 +78,10 @@ export class UserController {
 
         if (!user) {
             throw new NotFoundException("User not found");
+        }
+
+        if ((await this.userService.count()) === 1) {
+            throw new BadRequestException("Cannot delete the last user");
         }
 
         await this.userService.delete(user);

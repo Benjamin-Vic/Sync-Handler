@@ -26,6 +26,10 @@ export class PlayerService {
         return this.userRepository.findOne(options);
     }
 
+    async count(options?: FindManyOptions<Player> | undefined): Promise<number> {
+        return this.userRepository.count(options);
+    }
+
     async create(dto: CreatePlayerDto): Promise<void> {
         const player = new Player();
 
@@ -39,14 +43,14 @@ export class PlayerService {
     }
 
     async update(player: Player, dto: UpdatePlayerDto): Promise<void> {
-        if (!!dto.rank) {
-            player.rank = <Rank>dto.rank;
+        if (dto.rank !== undefined) {
+            player.rank = !!dto.rank ? <Rank>dto.rank : null;
         }
 
         await this.userRepository.save(player);
     }
 
     async delete(player: Player): Promise<void> {
-        await this.userRepository.remove(player);
+        await this.userRepository.delete({ id: player.id });
     }
 }

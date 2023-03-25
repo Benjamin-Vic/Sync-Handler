@@ -1,12 +1,14 @@
+import './styles/App.css'
+
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Auth from './pages/Auth';
 import Rank from './pages/Rank';
+import Player from './pages/Player';
+import User from './pages/User';
 
 const App = () => {
-
-
   if (!document.cookie) {
     return (
       <BrowserRouter>
@@ -26,8 +28,8 @@ const App = () => {
             <Route path="*" element={<Navigate to="/" />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/rank" element={<Rank />} />
-            {/* <Route path="/Services" element={<Services />} />
-            <Route path="/Profile" element={<Profile />} /> */}
+            <Route path="/player" element={<Player />} />
+            <Route path="/user" element={<User />} />
           </Route>
         </Routes>
       </BrowserRouter>

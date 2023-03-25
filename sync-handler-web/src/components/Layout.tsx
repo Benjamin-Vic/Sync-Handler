@@ -16,7 +16,6 @@ const Layout = () => {
     const nav: any = [
         { name: "Rank", href: "/rank" },
         { name: "Player", href: "/player" },
-        { name: "Permission", href: "/permission" },
         { name: "User", href: "/user" },
     ];
 

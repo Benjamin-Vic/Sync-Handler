@@ -1,7 +1,9 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
+import { QueryService } from "src/query/query.service";
 import { Rank } from "src/rank/rank.entity";
 import { RankService } from "src/rank/rank.service";
+import { FindManyOptions } from "typeorm";
 import { CreatePlayerDto } from "./dto/create.player.dto";
 import { UpdatePlayerDto } from "./dto/update.player.dto";
 import { Player } from "./player.entity";
@@ -13,16 +15,20 @@ export class PlayerController {
     constructor(
         private readonly playerService: PlayerService,
         private readonly rankService: RankService,
+        private readonly queryService: QueryService
     ) { }
 
     @Get("columns")
     async getColumns(): Promise<string[]> {
+        
         return this.playerService.getColumns();
     }
 
     @Get()
-    async findAll(): Promise<Player[]> {
-        return this.playerService.find();
+    async findAll(@Query() query: any): Promise<[Player[], number]> {
+        const options: FindManyOptions<any> = this.queryService.parseFindAll(query, await this.getColumns());
+        options.relations = ["rank"];
+        return [await this.playerService.find(options), await this.playerService.count(options.where ? { where: options.where } : {})];
     }
 
     @Get(":id")

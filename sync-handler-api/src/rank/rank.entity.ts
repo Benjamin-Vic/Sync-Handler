@@ -1,6 +1,4 @@
 import { Color } from "src/enum/color.enum";
-import { Permission } from "src/permission/permission.entity";
-import { PermissionGroup } from "src/permission_group/permission_group.entity";
 import { Player } from "src/player/player.entity";
 import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -25,7 +23,7 @@ export class Rank {
         type: "varchar",
         length: 32,
     })
-    prefix: string;
+    prefix: string | null;
 
     @Column({
         nullable: true,
@@ -34,22 +32,24 @@ export class Rank {
         type: "varchar",
         length: 32,
     })
-    suffix: string;
+    suffix: string | null;
 
     @Column({
-        nullable: true,
+        nullable: false,
         unique: false,
         name: "chat_color",
         type: "enum",
         enum: Color
     })
-    chatColor: Color;
+    chatColor: Color | null;
 
-    @ManyToMany(type => Permission, permission => permission.ranks)
-    permissions: Permission[];
-
-    @ManyToMany(type => PermissionGroup, permissionGroup => permissionGroup.ranks)
-    permissionGroups: PermissionGroup[];
+    @Column({
+        nullable: true,
+        unique: false,
+        name: "permissions",
+        type: "jsonb",
+    })
+    permissions: string[];
 
     @OneToMany(type => Player, player => player.rank)
     players: Player[];

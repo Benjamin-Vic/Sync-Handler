@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, FindOneOptions, Repository } from "typeorm";
 import { CreateRankDto } from "./dto/create.rank.dto";
+import { UpdateRankDto } from "./dto/update.rank.dto";
 import { Rank } from "./rank.entity";
 
 @Injectable()
@@ -46,22 +47,21 @@ export class RankService {
         await this.rankRepository.save(rank);
     }
 
-    async update(rank: Rank, dto: CreateRankDto): Promise<void> {
-
+    async update(rank: Rank, dto: UpdateRankDto): Promise<void> {
         if (!!dto.name) {
             rank.name = dto.name;
         }
 
-        if (!!dto.prefix) {
-            rank.prefix = dto.prefix;
+        if (dto.prefix !== undefined) {
+            rank.prefix = !!dto.prefix ? dto.prefix : null;
         }
 
-        if (!!dto.suffix) {
-            rank.suffix = dto.suffix;
+        if (dto.suffix !== undefined) {
+            rank.suffix = !!dto.suffix ? dto.suffix : null;
         }
 
-        if (!!dto.chatColor) {
-            rank.chatColor = dto.chatColor;
+        if (dto.chatColor !== undefined) {
+            rank.chatColor = !!dto.chatColor ? dto.chatColor : null;
         }
 
         await this.rankRepository.save(rank);

@@ -2,25 +2,25 @@ import '../styles/Elem.css';
 
 import Table from '../components/Table';
 import { useModal } from '../contexts/modal.context';
-import RankDialog from '../dialogs/rank.dialog';
+import PlayerDialog from '../dialogs/player.dialog';
 
-const Rank = () => {
+const Player = () => {
     const { setModal }: any = useModal();
 
     return (
         <div className="elem">
             <div className="container-left">
-                <span className="title">Rank</span>
+                <span className="title">Player</span>
                 <div className="space" />
-                <button onClick={() => setModal(<RankDialog rank={null} />)}>
+                <button onClick={() => setModal(<PlayerDialog player={null} />)}>
                     <img src="/icon/add.svg" alt="add" />
                 </button>
             </div>
             <div className="container-right">
-                <Table type="rank" edit={(row: string[]) => setModal(<RankDialog rank={row} />)} />
+                <Table type="player" edit={(row: string[]) => setModal(<PlayerDialog player={row} />) } />
             </div>
         </div>
     );
-};
+}
 
-export default Rank;
+export default Player;

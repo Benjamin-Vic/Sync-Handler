@@ -24,7 +24,7 @@
     justify-content: center;
     align-items: center;
 
-    background-color: white;
+    background-color: var(--color-light);
 }
 
 .auth .card .title {
@@ -48,25 +48,28 @@
     padding: 8px 16px;
 
     font-size: 1rem;
- 
-    outline: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--color-light-dark-dark);
 }
 
 .auth .card form input:hover,
 .auth .card form input:focus {
-    border: 1px solid #2196f3;
+    border: 1px solid var(--color-primary);
 }
 
 .auth .card form input.submit {
     background: transparent;
+    color: var(--color-dark);
+    text-align: center;
     border: unset;
-    /* border-radius: 4px;ç */
+    cursor: pointer;
+    transition: 0.5s;
 }
 
 .auth .card form input.submit:hover {
-    background: #e0e0e0;
-    /* border: unset; */
-    transition: 0.5s;
+    background: var(--color-primary);
+    color: var(--color-light);
 }
