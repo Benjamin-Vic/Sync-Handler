@@ -16,16 +16,20 @@ const PlayerDialog = (props: { player: string[] | null }) => {
         api.findAll('rank').then((res: ResultInterface) => {
             if (res.state)
                 setRanks(res.data[0]);
+
+            setRank(ranks.find((rank: any) => rank.name === 'default')?.id);
+
+            if (!props.player || props.player.length === 0)
+                return;
+
+            if (props.player[1])
+                setUuid(props.player[1]);
+
+            if (props.player[2])
+                setRank((props.player[2] as any).id);
         });
 
-        if (!props.player || props.player.length === 0)
-            return;
 
-        if (props.player[1])
-            setUuid(props.player[1]);
-
-        if (props.player[2])
-            setRank((props.player[2] as any).id);
     }, [props.player]);
 
     const parsePlayer = (): any => {
@@ -79,7 +83,6 @@ const PlayerDialog = (props: { player: string[] | null }) => {
                 <input className="input" disabled={!!props.player} type="text" placeholder="Uuid" required={true} value={uuid} onChange={(e) => (setUuid(e.target.value))} />
 
                 <select className="input" value={rank} onChange={(e) => (setRank(+e.target.value))}>
-                    <option value={-1}>Default</option>
                     {ranks.map((rank: any) => (
                         <option key={rank.id} value={rank.id}>{rank.name}</option>
                     ))}

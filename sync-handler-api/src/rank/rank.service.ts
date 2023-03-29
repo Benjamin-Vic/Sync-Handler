@@ -48,7 +48,7 @@ export class RankService {
     }
 
     async update(rank: Rank, dto: UpdateRankDto): Promise<void> {
-        if (!!dto.name) {
+        if (!!dto.name && rank.name !== 'default') {
             rank.name = dto.name;
         }
 

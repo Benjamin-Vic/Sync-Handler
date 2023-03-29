@@ -76,8 +76,8 @@ export class RankController {
             throw new NotFoundException("Rank not found");
         }
 
-        if ((await this.rankService.count()) === 1) {
-            throw new BadRequestException("Cannot delete the last rank");
+        if (rank.name === "default") {
+            throw new BadRequestException("Cannot delete the default rank");
         }
 
         await this.rankService.delete(rank);

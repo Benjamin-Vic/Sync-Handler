@@ -1,0 +1,4 @@
+name: Sync-Handler
+version: 1.0
+main: fr.alwan.SyncHandler.SyncHandler
+api-version: 1.19

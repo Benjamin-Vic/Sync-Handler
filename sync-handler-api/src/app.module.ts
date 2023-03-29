@@ -6,6 +6,8 @@ import { Player } from './player/player.entity';
 import { PlayerModule } from './player/player.module';
 import { Rank } from './rank/rank.entity';
 import { RankModule } from './rank/rank.module';
+import { ServerModule } from './server/server.module';
+import { SubscriberModule } from './subscriber/subscriber.module';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 
@@ -23,13 +25,15 @@ import { UserModule } from './user/user.module';
         password: configService.get("DB_PASSWORD"),
         database: configService.get("DB_DATABASE"),
         entities: [User, Player, Rank],
-        synchronize: configService.get("DB_SYNC") === "true"
+        synchronize: configService.get("DB_SYNC") === "true",
       }), inject: [ConfigService]
     }),
     AuthModule,
     UserModule,
     PlayerModule,
     RankModule,
+    ServerModule,
+    SubscriberModule
   ],
   controllers: [],
   providers: [],

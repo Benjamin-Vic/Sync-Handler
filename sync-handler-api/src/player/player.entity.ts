@@ -11,7 +11,6 @@ export class Player {
         unique: true,
         name: "uuid",
         type: "varchar",
-        length: 32,
         })
     uuid: string;
 
