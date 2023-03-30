@@ -49,7 +49,7 @@ export class Rank {
         name: "permissions",
         type: "jsonb",
     })
-    permissions: string[];
+    permissions: string[] | null;
 
     @OneToMany(type => Player, player => player.rank)
     players: Player[];

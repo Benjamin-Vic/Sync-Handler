@@ -11,6 +11,7 @@ const RankDialog = (props: { rank: string[] | null }) => {
     const [prefix, setPrefix] = useState<string>("");
     const [suffix, setSuffix] = useState<string>("");
     const [chatColor, setChatColor] = useState<Color>(Color['§7']);
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     const { unSetModal }: any = useModal();
 
@@ -30,6 +31,9 @@ const RankDialog = (props: { rank: string[] | null }) => {
         if (props.rank[4]) {
             const color = props.rank[4] as Color;
             setChatColor(Object.values(Color).find((c: Color) => c === color) as Color);
+
+        if (props.rank[5])
+            setPermissions(props.rank[5] as unknown as string[]);
         }
     }, [props.rank]);
 
@@ -39,17 +43,24 @@ const RankDialog = (props: { rank: string[] | null }) => {
         if (props.rank) {
             if (props.rank[1] !== name)
                 rank['name'] = name;
-            if (props.rank[2] !== prefix)
+            if (props.rank[2] !== prefix && (prefix !== "" || props.rank[2] !== null))
                 rank['prefix'] = prefix;
-            if (props.rank[3] !== suffix)
+            if (props.rank[3] !== suffix && (suffix !== "" || props.rank[3] !== null))
                 rank['suffix'] = suffix;
             if (props.rank[4] !== chatColor)
                 rank['chatColor'] = chatColor;
+            if ((props.rank[5] as unknown as string[]) !== permissions)
+                rank['permissions'] = permissions;
         } else {
             rank['name'] = name;
             rank['prefix'] = prefix;
             rank['suffix'] = suffix;
             rank['chatColor'] = chatColor;
+            rank['permissions'] = permissions;
+        }
+
+        if (rank['permissions']) {
+            rank['permissions'] = (rank['permissions'] as unknown as string[]).filter((p: string) => p !== '');
         }
 
         return rank;
@@ -96,6 +107,8 @@ const RankDialog = (props: { rank: string[] | null }) => {
                         <option key={color} value={color}>{color}</option>
                     ))}
                 </select>
+
+                <textarea className="input" placeholder="Permissions" value={permissions.join('\n')} onChange={(e) => (setPermissions(e.target.value.split('\n')))} />
 
                 <input className="input submit" type='submit' value={props.rank ? 'Edit' : 'Add'} />
                 <input className="input cancel" type='button' value='Cancel' onClick={() => unSetModal()} />

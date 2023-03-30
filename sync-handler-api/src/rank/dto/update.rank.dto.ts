@@ -23,6 +23,7 @@ export class UpdateRankDto {
     @IsEnum(Color, {
         message: "Chat color must be a valid color"
     })
+    @IsOptional()
     chatColor: Color;
 
     @IsArray({

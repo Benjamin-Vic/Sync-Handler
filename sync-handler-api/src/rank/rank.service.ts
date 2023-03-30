@@ -44,6 +44,10 @@ export class RankService {
             rank.chatColor = dto.chatColor;
         }
 
+        if (!!dto.permissions) {
+            rank.permissions = dto.permissions;
+        }
+
         await this.rankRepository.save(rank);
     }
 
@@ -62,6 +66,10 @@ export class RankService {
 
         if (dto.chatColor !== undefined) {
             rank.chatColor = !!dto.chatColor ? dto.chatColor : null;
+        }
+
+        if (dto.permissions !== undefined) {
+            rank.permissions = !!dto.permissions ? dto.permissions : null;
         }
 
         await this.rankRepository.save(rank);

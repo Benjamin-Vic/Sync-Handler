@@ -2,12 +2,14 @@ package fr.alwan.SyncHandler;
 
 import fr.alwan.SyncHandler.events.AsyncPlayerChat;
 import fr.alwan.SyncHandler.events.AsyncPlayerPreLogin;
+import fr.alwan.SyncHandler.events.PlayerJoin;
 import fr.alwan.SyncHandler.events.PlayerQuit;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONArray;
@@ -25,6 +27,7 @@ public class SyncHandler extends JavaPlugin {
     public Socket socket;
     public HashMap<String, Rank> rankMemory = new HashMap<>();
     public HashMap<UUID, String> playerMemory = new HashMap<>();
+    public HashMap<UUID, PermissionAttachment> permissionMemory = new HashMap<>();
     public ArrayList<UUID> loginMemory = new ArrayList<>();
 
     public static SyncHandler getInstance() {
@@ -35,8 +38,8 @@ public class SyncHandler extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.loadSocket();
-        this.loadEvents();
-        this.loadPlayers();
+        this.loadEvent();
+        this.loadPlayer();
 
         getLogger().info("SyncHandler is loaded!");
     }
@@ -65,19 +68,12 @@ public class SyncHandler extends JavaPlugin {
                         rankMemory.put(rank.getName(), rank);
                     }
 
+                    for (final Player player : Bukkit.getOnlinePlayers())
+                        loadPermission(player);
+
                     getLogger().info(" ");
                     getLogger().info("RankMemory Update");
                     getLogger().info(" ");
-
-                    for (Rank r : rankMemory.values()) {
-
-                        getLogger().info("name: \t" + r.getName());
-                        getLogger().info("prefix: \t" + r.getPrefix());
-                        getLogger().info("suffix: \t" + r.getSuffix());
-                        getLogger().info("chatColor: \t" + r.getChatColor());
-                        getLogger().info("permissions: \t" + r.getPermissions().toString());
-
-                    }
 
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
@@ -97,10 +93,14 @@ public class SyncHandler extends JavaPlugin {
                         if (player != null || loginMemory.contains(uuid)) {
                             if (player != null && !loginMemory.contains(uuid))
                                 player.sendMessage("Your rank has been changed");
+
                             loginMemory.remove(uuid);
 
                             JSONObject rank = object.getJSONObject("rank");
                             playerMemory.put(uuid, rank.getString("name"));
+
+                            if (player != null)
+                                loadPermission(player);
 
                             getLogger().info(" ");
                             getLogger().info("PlayerMemory Update " + uuid);
@@ -119,15 +119,40 @@ public class SyncHandler extends JavaPlugin {
         socket.off();
     }
 
-    private void loadEvents() {
+    private void loadEvent() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(), this);
         pm.registerEvents(new AsyncPlayerPreLogin(), this);
+        pm.registerEvents(new PlayerJoin(), this);
         pm.registerEvents(new PlayerQuit(), this);
     }
 
-    private void loadPlayers() {
+    private void loadPlayer() {
         for (Player player : Bukkit.getOnlinePlayers())
             socket.emit("player", player.getUniqueId());
+    }
+
+    public void loadPermission(final Player player) {
+        this.unloadPermission(player);
+
+        final PermissionAttachment attachment = player.addAttachment(this);
+        final Rank rank = rankMemory.get(playerMemory.get(player.getUniqueId()));
+
+        for (final String perm : rank.getPermissions())
+            attachment.setPermission(perm, true);
+
+        permissionMemory.put(player.getUniqueId(), attachment);
+    }
+
+    public void unloadPermission(final Player player) {
+        if (permissionMemory.containsKey(player.getUniqueId())) {
+
+            final PermissionAttachment attachment = permissionMemory.get(player.getUniqueId());
+
+            for (final String perm : attachment.getPermissions().keySet())
+                attachment.unsetPermission(perm);
+
+            permissionMemory.remove(player.getUniqueId());
+        }
     }
 }

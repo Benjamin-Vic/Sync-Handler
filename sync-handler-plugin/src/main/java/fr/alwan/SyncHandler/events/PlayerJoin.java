@@ -4,15 +4,15 @@ import fr.alwan.SyncHandler.SyncHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
-public class PlayerQuit implements Listener {
+public class PlayerJoin implements Listener {
     @EventHandler
-    public void onPlayerQuit(final PlayerQuitEvent event) {
+    public void onPlayerJoin(final PlayerJoinEvent event) {
         final SyncHandler instance = SyncHandler.getInstance();
         final Player player = event.getPlayer();
 
-        instance.unloadPermission(player);
-        instance.playerMemory.remove(player.getUniqueId());
+        if (instance.playerMemory.containsKey(player.getUniqueId()))
+            instance.loadPermission(player);
     }
 }
